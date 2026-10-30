@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mídia paga por produto · Rank 2026</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{color-scheme:light dark;--bg:#F6F7F9;--color-fg:#121212;--color-fg-muted:#5B6470;--color-border-line:#E3E6EA;--color-panel:#FFFFFF;--color-ok:#0F8A5F;--color-warn:#C2570C;--color-bad:#C2570C;
+--cds-gap-lg:24px;--cds-gap-md:16px;--cds-pad-lg:20px;--cds-pad-sm:12px;--cds-pad-xs:6px;--cds-radius:10px;--cds-font-size-body:.9375rem;--cds-font-size-caption:.75rem;--cds-font-size-heading:1rem;--cds-font-size-title:1.75rem;--cds-font-weight-medium:500;
+--cds-chart-grid:#E3E6EA;--cds-chart-muted:#8A93A0;--cds-border:#E3E6EA;--cds-text-secondary:#5B6470;--cds-surface-popover:#FFFFFF;--cds-shadow-popover:0 4px 16px rgba(18,18,18,.14);--cds-dur-slow:.4s;
+--font-anthropic-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-anthropic-serif:Georgia,"Times New Roman",serif}
+@media (prefers-color-scheme:dark){:root{--bg:#121212;--color-fg:#F2F3F5;--color-fg-muted:#A3ABB6;--color-border-line:#2A2F36;--color-panel:#1B1E22;--color-ok:#34D399;--color-warn:#FB923C;--color-bad:#FB923C;--cds-chart-grid:#2A2F36;--cds-chart-muted:#7B8490;--cds-border:#2A2F36;--cds-text-secondary:#A3ABB6;--cds-surface-popover:#23272C;--cds-shadow-popover:0 4px 16px rgba(0,0,0,.5)}}
+html,body{margin:0;background:var(--bg);color:var(--color-fg)}
+body{padding:24px 16px 48px}
+.dash-skeleton{background:linear-gradient(90deg,transparent,rgba(128,128,128,.12),transparent);background-size:200% 100%;animation:sk 1.4s infinite}
+@keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+</head><body>
+<div id="dash-root">
+<style>
+.rk{max-width:1180px;margin-inline:auto;font-family:var(--font-anthropic-sans);color:var(--color-fg);font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
+.rk b{font-weight:600}
+.rk-tabs{display:flex;gap:4px;border-bottom:1px solid var(--color-border-line);overflow-x:auto}
+.rk-tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--color-fg-muted);font:inherit;font-size:var(--cds-font-size-body);padding:8px 14px;cursor:pointer;white-space:nowrap}
+.rk-tab[aria-selected=true]{color:var(--color-fg);border-bottom-color:var(--tc,var(--color-fg));font-weight:500}
+.rk-panel{display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
+.rk-panel[hidden]{display:none}
+.rk-ok{color:var(--color-ok)}
+.rk-warn{color:var(--color-warn)}
+.rk-mut{color:var(--color-fg-muted)}
+.rk-tbl td.rk-d{font-size:.5625rem;padding-left:0}
+.rk-kicker{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);text-transform:uppercase;letter-spacing:.06em}
+.rk-title{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);margin:4px 0 6px}
+.rk-take{margin:0;font-size:var(--cds-font-size-body);line-height:1.55;color:var(--color-fg-muted);max-width:70ch}
+.rk-take b{color:var(--color-fg)}
+.rk-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10.5rem),1fr));gap:var(--cds-gap-md)}
+.rk-tile,.rk-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg)}
+.rk-tile{display:flex;flex-direction:column;gap:4px;min-height:6.5rem}
+.rk-tl{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rk-tv{font-family:var(--font-anthropic-serif);font-weight:400;font-size:var(--cds-font-size-title);line-height:1.1}
+.rk-ts{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rk-stack{display:flex;flex-direction:column;gap:var(--cds-gap-md)}
+.rk-prod .rk-chart{min-height:300px}
+.rk-prod .rk-stats{max-width:46rem}
+.rk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:var(--cds-gap-md)}
+.rk-card-h{display:flex;align-items:baseline;gap:8px;margin-bottom:var(--cds-pad-sm);flex-wrap:wrap}
+.rk-h2{margin:0;font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium)}
+.rk-note{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rk-dot{width:.6rem;height:.6rem;border-radius:50%;background:var(--pc);align-self:center}
+.rk-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.rk-stats div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rk-sl{font-size:.6875rem;color:var(--color-fg-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk-sv{font-size:var(--cds-font-size-body);white-space:nowrap}
+.rk-sub{margin:var(--cds-pad-sm) 0 0;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rk-chart{position:relative;min-height:240px;margin-top:var(--cds-pad-sm)}
+.rk-chart svg{display:block;overflow:visible}
+.rk-legend{margin:6px 0 0;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.rk-leg{display:inline-flex;align-items:center;gap:5px;margin-right:12px}
+.rk-leg i{width:.6rem;height:.6rem;border-radius:2px;display:inline-block}
+.rk-scroll{overflow:auto;max-height:26rem;margin-top:var(--cds-pad-sm)}
+.rk-tbl{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-caption)}
+.rk-tbl th{position:sticky;top:0;background:var(--color-panel);text-align:left;font-weight:500;color:var(--color-fg-muted);padding:6px 8px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.rk-tbl td{padding:7px 8px;border-bottom:1px solid var(--color-border-line);white-space:nowrap}
+.rk-tbl th.rk-num,.rk-tbl td.rk-num{text-align:right}
+.rk-tbl tr.rk-total td{font-weight:600;border-bottom:0}
+.rk-tbl td.rk-p::before{content:"";display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:var(--pc);margin-right:6px}
+.rk-foot{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted);line-height:1.55;margin:0}
+.rk-tip{position:absolute;pointer-events:none;display:none;z-index:3;white-space:nowrap;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:var(--cds-radius);box-shadow:var(--cds-shadow-popover);padding:var(--cds-pad-xs) var(--cds-pad-sm);font-size:var(--cds-font-size-caption)}
+.rk-tip-h{color:var(--cds-text-secondary);margin-bottom:2px}
+.rk-tip-l{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.rk-tip-l i{width:.55rem;height:.55rem;border-radius:2px;display:inline-block;margin-right:-2px}
+.rk-fail{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+.rk-fail::before{content:"";width:.375rem;height:.375rem;border-radius:50%;background:var(--color-bad)}
+.rk-axis{fill:var(--color-fg-muted);font-size:11px}
+.rk-val{fill:var(--color-fg);font-size:12px;font-weight:600}
+.rk-lbl{fill:var(--color-fg);font-size:11px;paint-order:stroke;stroke:var(--color-panel);stroke-width:3px;stroke-linejoin:round}
+[data-dash-source-state=empty]{color:transparent}
+[data-dash-source-state=refreshing]{opacity:.5;transition:opacity var(--cds-dur-slow)}
+@media (max-width:560px){.rk-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+
+<div class="rk">
+  <header id="topo">
+    <div class="rk-kicker">Mídia paga · RMApp, RMAds e RMGEO · mai–out/2026</div>
+    <h1 class="rk-title" id="titulo">Mídia paga por produto</h1>
+  </header>
+
+
+
+
+
+
+
+
+  <nav class="rk-tabs" id="abas" role="tablist" aria-label="Produtos">
+    <button class="rk-tab" id="tab-todos" role="tab" data-tab="todos" aria-selected="true">Todos</button>
+    <button class="rk-tab" id="tab-RMApp" role="tab" data-tab="RMApp" aria-selected="false" style="--tc:#4D6BFF">RMApp</button>
+    <button class="rk-tab" id="tab-RMAds" role="tab" data-tab="RMAds" aria-selected="false" style="--tc:#FF8C00">RMAds</button>
+    <button class="rk-tab" id="tab-RMGEO" role="tab" data-tab="RMGEO" aria-selected="false" style="--tc:#06B6D4">RMGEO</button>
+  </nav>
+
+  <div class="rk-panel" id="aba-todos" data-panel="todos">
+    <p class="rk-take" id="resumo">De maio até hoje, <b data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=Total">—</b> em mídia paga geraram <b data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=Total">—</b> leads, a <b data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=Total">—</b> por lead, <b data-fmt="int" data-source="por_produto" data-field="calls" data-where="produto=Total">—</b> calls e <b data-fmt="int" data-source="por_produto" data-field="vendas" data-where="produto=Total">—</b> vendas last touch. O RMGEO responde por <b data-fmt="pct" data-source="por_produto" data-field="share_leads" data-where="produto=RMGEO">—</b> dos leads.</p>
+  <section class="rk-tiles" id="kpis" aria-label="Totais mai–out">
+    <div class="rk-tile"><span class="rk-tl">Investimento</span><b class="rk-tv" data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=Total">—</b><span class="rk-ts">Realizado, 3 produtos</span></div>
+    <div class="rk-tile"><span class="rk-tl">Leads</span><b class="rk-tv" data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=Total">—</b><span class="rk-ts">Contatos (leads + MQLs)</span></div>
+    <div class="rk-tile"><span class="rk-tl">Custo por lead</span><b class="rk-tv" data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=Total">—</b><span class="rk-ts">Investimento ÷ leads</span></div>
+    <div class="rk-tile"><span class="rk-tl">Calls</span><b class="rk-tv" data-fmt="int" data-source="por_produto" data-field="calls" data-where="produto=Total">—</b><span class="rk-ts"><span data-fmt="pct" data-source="por_produto" data-field="lead_call" data-where="produto=Total">—</span> dos leads avançaram</span></div>
+    <div class="rk-tile"><span class="rk-tl">Vendas</span><b class="rk-tv" data-fmt="int" data-source="por_produto" data-field="vendas" data-where="produto=Total">—</b><span class="rk-ts">Last touch</span></div>
+  </section>
+  <section class="rk-card" id="total">
+    <div class="rk-card-h"><h2 class="rk-h2">Total de mídia paga</h2><span class="rk-note">Mai–out/2026 · soma dos três produtos</span></div>
+    <div class="rk-stats">
+      <div><span class="rk-sl">Investimento total</span><b class="rk-sv" data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=Total">—</b></div>
+      <div><span class="rk-sl">Leads totais</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=Total">—</b></div>
+      <div><span class="rk-sl">Custo por lead</span><b class="rk-sv" data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=Total">—</b></div>
+    </div>
+    <div class="rk-chart dash-skeleton" id="chart-total" data-source="total_mensal"></div>
+    <p class="rk-legend"><span class="rk-leg"><i style="background:var(--cds-chart-muted)"></i>Investimento total (barras, eixo esquerdo)</span><span class="rk-leg"><i style="background:var(--color-fg)"></i>Leads totais (linha, eixo direito)</span></p>
+  </section>
+  <section class="rk-card" id="funil">
+    <div class="rk-card-h"><h2 class="rk-h2">Funil por produto</h2><span class="rk-note">Mai–out/2026 · lead → call → venda</span></div>
+    <div class="rk-scroll">
+      <table class="rk-tbl" id="tbl-produtos" data-source="por_produto" data-row-key="produto">
+        <thead><tr>
+          <th data-field="produto">Produto</th>
+          <th class="rk-num" data-field="investimento">Investimento</th>
+          <th class="rk-num" data-field="leads">Leads</th>
+          <th class="rk-num" data-field="cpl">Custo por lead</th>
+          <th class="rk-num" data-field="calls">Calls</th>
+          <th class="rk-num" data-field="lead_call">Lead → call</th>
+          <th class="rk-num" data-field="custo_call">Custo por call</th>
+          <th class="rk-num" data-field="vendas">Vendas</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="rk-grid" id="comparativo">
+    <div class="rk-card" id="card-invest">
+      <div class="rk-card-h"><h2 class="rk-h2">Investimento por mês</h2><span class="rk-note">R$ · empilhado por produto</span></div>
+      <div class="rk-chart dash-skeleton" id="chart-invest" data-source="mensal_calc"></div>
+      <p class="rk-legend" id="leg-invest"></p>
+    </div>
+    <div class="rk-card" id="card-calls">
+      <div class="rk-card-h"><h2 class="rk-h2">Calls por mês</h2><span class="rk-note">Leads que avançaram no funil</span></div>
+      <div class="rk-chart dash-skeleton" id="chart-calls" data-source="mensal_calc"></div>
+      <p class="rk-legend" id="leg-calls"></p>
+    </div>
+  </section>
+  <section class="rk-card" id="vendas">
+    <div class="rk-card-h"><h2 class="rk-h2">Vendas de origem Ads</h2><span class="rk-note">Negócios ganhos de maio a outubro de 2026 · direto do HubSpot</span></div>
+    <div class="rk-scroll">
+      <table class="rk-tbl" id="tbl-vendas" data-source="vendas_hs" data-row-key="id">
+        <thead><tr>
+          <th data-field="dealname">Negócio</th>
+          <th data-field="pipeline">Funil</th>
+          <th data-field="closedate">Fechamento</th>
+          <th class="rk-num" data-field="amount">Valor</th>
+          <th data-field="origem_detalhada_ads">Origem detalhada</th>
+          <th data-field="link">HubSpot</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="rk-sub">Lista os negócios ganhos com origem Ads. Os totais de vendas acima vêm da planilha (last touch) e podem não incluir negócios fechados depois da última atualização dela.</p>
+  </section>
+  <section class="rk-card" id="detalhe">
+    <div class="rk-card-h"><h2 class="rk-h2">Detalhe por mês e produto</h2><span class="rk-note">Mai–out/2026</span></div>
+    <div class="rk-scroll">
+      <table class="rk-tbl" id="tbl-mensal" data-source="mensal_calc" data-row-key="chave">
+          <thead><tr>
+            <th data-field="mes">Mês</th>
+            <th data-field="produto">Produto</th>
+            <th class="rk-num" data-field="investimento">Investimento</th>
+            <th class="rk-num" data-field="d_investimento">vs mês ant.</th>
+            <th class="rk-num" data-field="leads">Leads</th>
+            <th class="rk-num" data-field="d_leads">vs mês ant.</th>
+            <th class="rk-num" data-field="cpl">Custo por lead</th>
+            <th class="rk-num" data-field="d_cpl">vs mês ant.</th>
+            <th class="rk-num" data-field="calls">Calls</th>
+            <th class="rk-num" data-field="d_calls">vs mês ant.</th>
+            <th class="rk-num" data-field="custo_call">Custo por call</th>
+            <th class="rk-num" data-field="vendas">Vendas</th>
+            <th class="rk-num" data-field="d_vendas">vs mês ant.</th>
+          </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+  </div>
+
+  <div class="rk-panel" id="aba-RMApp" data-panel="RMApp" hidden>
+    <section class="rk-card rk-prod" id="prod-RMApp" style="--pc:#4D6BFF">
+      <div class="rk-card-h"><span class="rk-dot"></span><h2 class="rk-h2">RMApp</h2><span class="rk-note">Mai–out/2026</span></div>
+      <div class="rk-stats"><div><span class="rk-sl">Investimento</span><b class="rk-sv" data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=RMApp">—</b></div><div><span class="rk-sl">Leads</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=RMApp">—</b></div><div><span class="rk-sl">Custo/lead</span><b class="rk-sv" data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=RMApp">—</b></div><div><span class="rk-sl">Calls</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="calls" data-where="produto=RMApp">—</b></div><div><span class="rk-sl">Vendas</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="vendas" data-where="produto=RMApp">—</b></div></div>
+      <p class="rk-sub"><span data-fmt="pct" data-source="por_produto" data-field="lead_call" data-where="produto=RMApp">—</span> dos leads viraram call · <span data-fmt="brl" data-source="por_produto" data-field="custo_call" data-where="produto=RMApp">—</span> por call</p>
+      <div class="rk-chart dash-skeleton" id="chart-RMApp" data-source="mensal_calc"></div>
+      <p class="rk-legend"><span class="rk-leg"><i style="background:var(--pc)"></i>Leads (barras)</span><span class="rk-leg"><i style="background:var(--color-fg)"></i>Custo por lead (eixo direito)</span><span class="rk-leg"><i style="background:#E6A800"></i>Calls</span><span class="rk-leg"><i style="background:#1FA37A"></i>Vendas</span>Calls e vendas usam a escala de leads (eixo esquerdo). Sob o mês: investimento.</p>
+    </section>
+    <section class="rk-card" id="detalhe-RMApp">
+      <div class="rk-card-h"><h2 class="rk-h2">Detalhe por mês</h2><span class="rk-note">RMApp · Mai–out/2026</span></div>
+      <div class="rk-scroll">
+        <table class="rk-tbl" id="tbl-mensal-RMApp" data-source="mensal_calc" data-row-key="chave">
+          <thead><tr>
+            <th data-field="mes">Mês</th>
+            <th class="rk-num" data-field="investimento">Investimento</th>
+            <th class="rk-num" data-field="d_investimento">vs mês ant.</th>
+            <th class="rk-num" data-field="leads">Leads</th>
+            <th class="rk-num" data-field="d_leads">vs mês ant.</th>
+            <th class="rk-num" data-field="cpl">Custo por lead</th>
+            <th class="rk-num" data-field="d_cpl">vs mês ant.</th>
+            <th class="rk-num" data-field="calls">Calls</th>
+            <th class="rk-num" data-field="d_calls">vs mês ant.</th>
+            <th class="rk-num" data-field="custo_call">Custo por call</th>
+            <th class="rk-num" data-field="vendas">Vendas</th>
+            <th class="rk-num" data-field="d_vendas">vs mês ant.</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="rk-panel" id="aba-RMAds" data-panel="RMAds" hidden>
+    <section class="rk-card rk-prod" id="prod-RMAds" style="--pc:#FF8C00">
+      <div class="rk-card-h"><span class="rk-dot"></span><h2 class="rk-h2">RMAds</h2><span class="rk-note">Mai–out/2026</span></div>
+      <div class="rk-stats"><div><span class="rk-sl">Investimento</span><b class="rk-sv" data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=RMAds">—</b></div><div><span class="rk-sl">Leads</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=RMAds">—</b></div><div><span class="rk-sl">Custo/lead</span><b class="rk-sv" data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=RMAds">—</b></div><div><span class="rk-sl">Calls</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="calls" data-where="produto=RMAds">—</b></div><div><span class="rk-sl">Vendas</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="vendas" data-where="produto=RMAds">—</b></div></div>
+      <p class="rk-sub"><span data-fmt="pct" data-source="por_produto" data-field="lead_call" data-where="produto=RMAds">—</span> dos leads viraram call · <span data-fmt="brl" data-source="por_produto" data-field="custo_call" data-where="produto=RMAds">—</span> por call</p>
+      <div class="rk-chart dash-skeleton" id="chart-RMAds" data-source="mensal_calc"></div>
+      <p class="rk-legend"><span class="rk-leg"><i style="background:var(--pc)"></i>Leads (barras)</span><span class="rk-leg"><i style="background:var(--color-fg)"></i>Custo por lead (eixo direito)</span><span class="rk-leg"><i style="background:#E6A800"></i>Calls</span><span class="rk-leg"><i style="background:#1FA37A"></i>Vendas</span>Calls e vendas usam a escala de leads (eixo esquerdo). Sob o mês: investimento.</p>
+    </section>
+    <section class="rk-card" id="detalhe-RMAds">
+      <div class="rk-card-h"><h2 class="rk-h2">Detalhe por mês</h2><span class="rk-note">RMAds · Mai–out/2026</span></div>
+      <div class="rk-scroll">
+        <table class="rk-tbl" id="tbl-mensal-RMAds" data-source="mensal_calc" data-row-key="chave">
+          <thead><tr>
+            <th data-field="mes">Mês</th>
+            <th class="rk-num" data-field="investimento">Investimento</th>
+            <th class="rk-num" data-field="d_investimento">vs mês ant.</th>
+            <th class="rk-num" data-field="leads">Leads</th>
+            <th class="rk-num" data-field="d_leads">vs mês ant.</th>
+            <th class="rk-num" data-field="cpl">Custo por lead</th>
+            <th class="rk-num" data-field="d_cpl">vs mês ant.</th>
+            <th class="rk-num" data-field="calls">Calls</th>
+            <th class="rk-num" data-field="d_calls">vs mês ant.</th>
+            <th class="rk-num" data-field="custo_call">Custo por call</th>
+            <th class="rk-num" data-field="vendas">Vendas</th>
+            <th class="rk-num" data-field="d_vendas">vs mês ant.</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="rk-panel" id="aba-RMGEO" data-panel="RMGEO" hidden>
+    <section class="rk-card rk-prod" id="prod-RMGEO" style="--pc:#06B6D4">
+      <div class="rk-card-h"><span class="rk-dot"></span><h2 class="rk-h2">RMGEO</h2><span class="rk-note">Mai–out/2026</span></div>
+      <div class="rk-stats"><div><span class="rk-sl">Investimento</span><b class="rk-sv" data-fmt="mil" data-source="por_produto" data-field="investimento" data-where="produto=RMGEO">—</b></div><div><span class="rk-sl">Leads</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="leads" data-where="produto=RMGEO">—</b></div><div><span class="rk-sl">Custo/lead</span><b class="rk-sv" data-fmt="brl" data-source="por_produto" data-field="cpl" data-where="produto=RMGEO">—</b></div><div><span class="rk-sl">Calls</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="calls" data-where="produto=RMGEO">—</b></div><div><span class="rk-sl">Vendas</span><b class="rk-sv" data-fmt="int" data-source="por_produto" data-field="vendas" data-where="produto=RMGEO">—</b></div></div>
+      <p class="rk-sub"><span data-fmt="pct" data-source="por_produto" data-field="lead_call" data-where="produto=RMGEO">—</span> dos leads viraram call · <span data-fmt="brl" data-source="por_produto" data-field="custo_call" data-where="produto=RMGEO">—</span> por call</p>
+      <div class="rk-chart dash-skeleton" id="chart-RMGEO" data-source="mensal_calc"></div>
+      <p class="rk-legend"><span class="rk-leg"><i style="background:var(--pc)"></i>Leads (barras)</span><span class="rk-leg"><i style="background:var(--color-fg)"></i>Custo por lead (eixo direito)</span><span class="rk-leg"><i style="background:#E6A800"></i>Calls</span><span class="rk-leg"><i style="background:#1FA37A"></i>Vendas</span>Calls e vendas usam a escala de leads (eixo esquerdo). Sob o mês: investimento.</p>
+    </section>
+    <section class="rk-card" id="detalhe-RMGEO">
+      <div class="rk-card-h"><h2 class="rk-h2">Detalhe por mês</h2><span class="rk-note">RMGEO · Mai–out/2026</span></div>
+      <div class="rk-scroll">
+        <table class="rk-tbl" id="tbl-mensal-RMGEO" data-source="mensal_calc" data-row-key="chave">
+          <thead><tr>
+            <th data-field="mes">Mês</th>
+            <th class="rk-num" data-field="investimento">Investimento</th>
+            <th class="rk-num" data-field="d_investimento">vs mês ant.</th>
+            <th class="rk-num" data-field="leads">Leads</th>
+            <th class="rk-num" data-field="d_leads">vs mês ant.</th>
+            <th class="rk-num" data-field="cpl">Custo por lead</th>
+            <th class="rk-num" data-field="d_cpl">vs mês ant.</th>
+            <th class="rk-num" data-field="calls">Calls</th>
+            <th class="rk-num" data-field="d_calls">vs mês ant.</th>
+            <th class="rk-num" data-field="custo_call">Custo por call</th>
+            <th class="rk-num" data-field="vendas">Vendas</th>
+            <th class="rk-num" data-field="d_vendas">vs mês ant.</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <p class="rk-foot" id="notas">Fonte: aba "Total resumido por produto 2026" do Plano de Mídia Paga. Leads são contatos (leads + MQLs); calls são as marcadas; vendas seguem o critério last touch. Mai–jul de RMGEO está registrado na planilha como "Data Rank GEO" e foi somado ao RMGEO; DataRank e Multi produto ficam de fora. O asterisco marca o mês em andamento, com números parciais. As colunas "vs mês ant." comparam com o mês anterior do mesmo produto: investimento, leads e custo por lead em %, calls e vendas em quantidade; verde indica melhora, amarelo piora e o investimento não leva cor. <span id="ajustes"></span></p>
+</div>
+
+<script>
+window.dash=(()=>{
+  const L={},C={},S={},cbs=[],order=[];
+  const SRC={plano_midia:{live:'/api/plano',snap:'/snapshot-plano.json'},vendas_hs:{live:'/api/vendas',snap:'/snapshot-vendas.json'}};
+  const origem={};
+  const notify=()=>{recalc();aviso();cbs.forEach(f=>{try{f()}catch(e){console.error(e)}})};
+  const recalc=()=>{Object.keys(C).forEach(n=>{
+    const ins=C[n].inputs.map(i=>S[i]||{status:'loading'});
+    const bad=ins.find(s=>s.status!=='ok');
+    if(bad){S[n]={status:bad.status};return}
+    try{S[n]={status:'ok',data:C[n].fn(...ins.map(s=>s.data))}}catch(e){console.error(e);S[n]={status:'error'}}
+  })};
+  const aviso=()=>{
+    let el=document.getElementById('fonte-aviso');
+    if(!el){const n=document.getElementById('notas');if(!n)return;el=document.createElement('p');el.className='rk-foot';el.id='fonte-aviso';n.parentNode.insertBefore(el,n)}
+    const snap=Object.values(origem).includes('snap');
+    const done=Object.keys(origem).length===Object.keys(L).length;
+    if(!done)return;
+    el.textContent=snap?'Atenção: a conexão ao vivo ainda não está ativa para '+Object.keys(origem).filter(k=>origem[k]==='snap').map(k=>k==='vendas_hs'?'o HubSpot':'a planilha').join(' e ')+'; exibindo o último retrato dos dados (30/10/2026).':'Dados atualizados ao vivo da planilha e do HubSpot a cada acesso (cache de até 5 min).';
+  };
+  const get=async(u)=>{const r=await fetch(u);if(!r.ok)throw new Error(r.status);return r.json()};
+  const start=()=>{
+    Object.keys(L).forEach(n=>{S[n]={status:'loading'}});
+    notify();
+    Object.keys(L).forEach(async n=>{
+      let ans;
+      try{ans=await get(SRC[n].live);origem[n]='live'}
+      catch(e){try{ans=await get(SRC[n].snap);origem[n]='snap'}catch(e2){origem[n]='err';S[n]={status:'error'};notify();return}}
+      try{const o=L[n].fn({answer:ans});S[n]={status:'ok',data:o.data,meta:o.meta||[]}}catch(e){console.error(e);S[n]={status:'error'}}
+      notify();
+    });
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0));
+  return{
+    loader:(n,o)=>{L[n]=o},
+    calc:(n,o)=>{C[n]=o},
+    data:(n)=>S[n]||{status:'loading'},
+    onData:(f)=>{cbs.push(f)},
+    setLink:(s)=>{try{history.replaceState(null,'','#'+s)}catch(e){}}
+  };
+})();
+</script>
+<script>
+(() => {
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const PRODS = ['RMApp','RMAds','RMGEO'];
+  const PC = {RMApp:'#4D6BFF', RMAds:'#FF8C00', RMGEO:'#06B6D4'};
+  const hoje = new Date();
+  const NOW_YM = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
+  const nf0 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits: 0});
+  const brl = new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL', maximumFractionDigits: 0});
+  const pctf = new Intl.NumberFormat('pt-BR', {style: 'percent', maximumFractionDigits: 1});
+  const mil = (v) => v >= 10000 ? 'R$ ' + (v / 1000).toLocaleString('pt-BR', {maximumFractionDigits: 1}) + ' mil' : brl.format(v);
+  const tickMil = (v) => v >= 1000 ? (v / 1000).toLocaleString('pt-BR', {maximumFractionDigits: 1}) + ' mil' : String(v);
+  const FMT = {brl: (v) => brl.format(v), mil, int: (v) => nf0.format(v), pct: (v) => pctf.format(v)};
+  const show = (v, f) => (v == null || Number.isNaN(v)) ? '—' : FMT[f](v);
+  const mlabel = (ym) => MESES[+ym.slice(5, 7) - 1] + (ym === NOW_YM ? '*' : '');
+
+  // Planilha → linhas (uma por produto e mês)
+  dash.loader('plano_midia', {
+    description: 'Linhas de produto e mês da aba Total resumido por produto 2026, convertidas em números',
+    fn: ({answer}) => {
+      const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+      const values = (a && a.values) || [];
+      if (!values.length) throw new Error('A planilha não retornou linhas');
+      const MES = {Janeiro:1, Fevereiro:2, 'Março':3, Abril:4, Maio:5, Junho:6, Julho:7, Agosto:8, Setembro:9, Outubro:10, Novembro:11, Dezembro:12};
+      const PROD = {RankMyApp:'RMApp', RankMyAds:'RMAds', RankMyGEO:'RMGEO', 'Data Rank GEO':'RMGEO'};
+      const num = (s) => {
+        if (s == null) return null;
+        const t = String(s).replace(/R\$|\s/g, '').replace(/\./g, '').replace(',', '.');
+        return (t === '' || isNaN(t)) ? null : Number(t);
+      };
+      const rows = [], ajustes = [];
+      let mes = null;
+      for (const r of values) {
+        const m0 = String(r[0] || '').trim();
+        if (MES[m0]) mes = MES[m0];
+        const p = PROD[String(r[1] || '').trim()];
+        if (!mes || !p) continue;
+        let inv = num(r[4]);
+        if (inv == null) continue;
+        const leads = num(r[5]) || 0, calls = num(r[6]) || 0, vendas = num(r[8]) || 0, cpl = num(r[10]);
+        const ym = '2026-' + String(mes).padStart(2, '0');
+        let ajustado = false;
+        if (cpl && leads && Math.abs(cpl * leads - inv) > 0.05 * inv) {
+          ajustes.push(p + ' ' + ym + ': realizado ' + inv.toFixed(2) + ' → ' + (cpl * leads).toFixed(2));
+          inv = cpl * leads;
+          ajustado = true;
+        }
+        rows.push({mes: ym, produto: p, orcado: num(r[3]), investimento: inv, leads, calls, vendas, ajustado});
+      }
+      rows.sort((x, y) => x.mes.localeCompare(y.mes) || PRODS.indexOf(x.produto) - PRODS.indexOf(y.produto));
+      return {
+        data: rows,
+        columns: ['mes', 'produto', 'orcado', 'investimento', 'leads', 'calls', 'vendas', 'ajustado'],
+        meta: ajustes.length ? [{label: 'Ajuste de investimento', value: ajustes.join('; ')}] : []
+      };
+    }
+  });
+
+  dash.loader('vendas_hs', {
+    description: 'Negócios ganhos com origem Ads em 2026, com os campos do negócio em colunas',
+    fn: ({answer}) => {
+      const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+      if (!a || !Array.isArray(a.results)) throw new Error('O HubSpot não retornou negócios');
+      const PIPE = {'94612240': 'RMAds', '94613875': 'RMApp', '916004998': 'Novos produtos'};
+      const url = a.urlTemplate || '';
+      const rows = a.results.map((r) => {
+        const p = r.properties || {};
+        return {
+          id: String(r.id), dealname: p.dealname || '', pipeline: PIPE[p.pipeline] || String(p.pipeline || ''),
+          closedate: String(p.closedate || '').slice(0, 10),
+          amount: (p.amount == null || p.amount === '') ? null : Number(p.amount),
+          origem_detalhada_ads: p.origem_detalhada_ads || '', link: url.replace('{id}', String(r.id))
+        };
+      });
+      rows.sort((x, y) => x.closedate.localeCompare(y.closedate));
+      return {data: rows, columns: ['id', 'dealname', 'pipeline', 'closedate', 'amount', 'origem_detalhada_ads', 'link']};
+    }
+  });
+
+  dash.calc('mensal_calc', {
+    title: 'Métricas por mês e produto',
+    description: 'Custo por lead, custo por call, taxa lead → call e variação contra o mês anterior do mesmo produto, de maio de 2026 em diante.',
+    inputs: ['plano_midia'],
+    fn: (plano_midia) => {
+      const ant = (ym) => {
+        const y = Number(ym.slice(0, 4)), mm = Number(ym.slice(5, 7));
+        return mm === 1 ? (y - 1) + '-12' : y + '-' + String(mm - 1).padStart(2, '0');
+      };
+      const rel = (c, p) => p ? c / p - 1 : null;
+      return plano_midia.filter((r) => r.mes >= '2026-05').map((r) => {
+        const p = plano_midia.find((x) => x.mes === ant(r.mes) && x.produto === r.produto);
+        const cpl = r.leads ? r.investimento / r.leads : null;
+        const pcpl = p && p.leads ? p.investimento / p.leads : null;
+        return {
+          chave: r.mes + '|' + r.produto, mes: r.mes, produto: r.produto,
+          investimento: r.investimento, leads: r.leads, calls: r.calls, vendas: r.vendas,
+          cpl, custo_call: r.calls ? r.investimento / r.calls : null,
+          lead_call: r.leads ? r.calls / r.leads : null,
+          d_investimento: p ? rel(r.investimento, p.investimento) : null,
+          d_leads: p ? rel(r.leads, p.leads) : null,
+          d_cpl: (cpl != null && pcpl) ? cpl / pcpl - 1 : null,
+          d_calls: p ? r.calls - p.calls : null,
+          d_vendas: p ? r.vendas - p.vendas : null
+        };
+      });
+    }
+  });
+
+  dash.calc('por_produto', {
+    title: 'Totais por produto',
+    description: 'Soma de maio de 2026 até hoje por produto e no total, com custo por lead, custo por call e taxa lead → call.',
+    inputs: ['mensal_calc'],
+    fn: (mensal_calc) => {
+      const soma = (rs, k) => rs.reduce((a, r) => a + (r[k] || 0), 0);
+      const totalLeads = soma(mensal_calc, 'leads');
+      const monta = (nome, rs) => {
+        const inv = soma(rs, 'investimento'), leads = soma(rs, 'leads'), calls = soma(rs, 'calls'), vendas = soma(rs, 'vendas');
+        return {produto: nome, investimento: inv, leads, calls, vendas,
+          cpl: leads ? inv / leads : null, custo_call: calls ? inv / calls : null,
+          lead_call: leads ? calls / leads : null, share_leads: totalLeads ? leads / totalLeads : null};
+      };
+      return ['RMApp', 'RMAds', 'RMGEO'].map((p) => monta(p, mensal_calc.filter((r) => r.produto === p)))
+        .concat([monta('Total', mensal_calc)]);
+    }
+  });
+
+  dash.calc('total_mensal', {
+    title: 'Investimento e leads totais por mês',
+    description: 'Soma dos três produtos por mês, de maio de 2026 em diante, com o custo por lead do total.',
+    inputs: ['mensal_calc'],
+    fn: (mensal_calc) => {
+      const m = {};
+      mensal_calc.forEach((r) => {
+        const o = m[r.mes] || (m[r.mes] = {mes: r.mes, investimento: 0, leads: 0});
+        o.investimento += r.investimento || 0;
+        o.leads += r.leads || 0;
+      });
+      return Object.keys(m).sort().map((k) => ({mes: k, investimento: m[k].investimento, leads: m[k].leads,
+        cpl: m[k].leads ? m[k].investimento / m[k].leads : null}));
+    }
+  });
+
+  const $ = (s) => document.querySelector(s);
+
+  function paint(box, status) {
+    box.textContent = '';
+    if (status === 'error') {
+      box.classList.remove('dash-skeleton');
+      const d = document.createElement('div');
+      d.className = 'rk-fail';
+      d.textContent = 'Falha ao carregar';
+      box.appendChild(d);
+    } else box.classList.add('dash-skeleton');
+  }
+
+  function setTip(t, title, lines) {
+    t.textContent = '';
+    const h = document.createElement('div');
+    h.className = 'rk-tip-h';
+    h.textContent = title;
+    t.appendChild(h);
+    lines.forEach((l) => {
+      const d = document.createElement('div');
+      d.className = 'rk-tip-l';
+      if (l.color) { const s = document.createElement('i'); s.style.background = l.color; d.appendChild(s); }
+      const a = document.createElement('span'); a.textContent = l.label;
+      const b = document.createElement('b'); b.textContent = l.value;
+      d.append(a, b);
+      t.appendChild(d);
+    });
+  }
+  function placeTip(box, t, ev) {
+    const [px, py] = d3.pointer(ev, box);
+    t.style.display = 'block';
+    const w = t.offsetWidth, h = t.offsetHeight;
+    t.style.left = Math.max(4, Math.min(box.clientWidth - w - 4, px + 12)) + 'px';
+    t.style.top = Math.max(4, py - h - 8) + 'px';
+  }
+  function makeTip(box) {
+    const t = document.createElement('div');
+    t.className = 'rk-tip';
+    box.appendChild(t);
+    return t;
+  }
+
+  // Barras (leads, eixo esq.) + linha (custo por lead, eixo dir.), como no print
+  function drawCombo(box, rows, color) {
+    box.textContent = '';
+    box.classList.remove('dash-skeleton');
+    const W = Math.max(box.clientWidth, 240), H = W > 600 ? 300 : 250;
+    const m = {t: 22, r: 46, b: 48, l: 30};
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H);
+    const x = d3.scaleBand().domain(rows.map((r) => r.mes)).range([m.l, W - m.r]).padding(0.35);
+    const yL = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.leads) || 1]).nice().range([H - m.b, m.t]);
+    const yR = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.cpl || 0) || 1]).nice().range([H - m.b, m.t]);
+    yL.ticks(4).forEach((v) => {
+      svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yL(v)).attr('y2', yL(v)).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'rk-axis').attr('x', m.l - 6).attr('y', yL(v) + 4).attr('text-anchor', 'end').text(v);
+    });
+    yR.ticks(4).forEach((v) => {
+      svg.append('text').attr('class', 'rk-axis').attr('x', W - m.r + 6).attr('y', yR(v) + 4).text(tickMil(v));
+    });
+    const bw = Math.min(x.bandwidth(), 40);
+    const curto = x.step() < 62;
+    const cx = (r) => x(r.mes) + x.bandwidth() / 2;
+    rows.forEach((r) => {
+      if (r.vazio) {
+        svg.append('text').attr('class', 'rk-axis').attr('x', cx(r)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(mlabel(r.mes));
+        svg.append('text').attr('class', 'rk-axis').attr('x', cx(r)).attr('y', H - m.b + 30).attr('text-anchor', 'middle').text('—');
+        return;
+      }
+      svg.append('rect').attr('x', cx(r) - bw / 2).attr('y', yL(r.leads)).attr('width', bw)
+        .attr('height', Math.max(0, H - m.b - yL(r.leads))).attr('rx', 4).style('fill', color);
+      svg.append('text').attr('class', 'rk-val').attr('x', cx(r)).attr('y', yL(r.leads) - 6).attr('text-anchor', 'middle').text(nf0.format(r.leads));
+      svg.append('text').attr('class', 'rk-axis').attr('x', cx(r)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(mlabel(r.mes));
+      svg.append('text').attr('class', 'rk-axis').attr('x', cx(r)).attr('y', H - m.b + 30).attr('text-anchor', 'middle').text(curto ? Math.round(r.investimento / 1000) + 'k' : mil(r.investimento));
+    });
+    const line = d3.line().defined((r) => r.cpl != null).x(cx).y((r) => yR(r.cpl));
+    svg.append('path').datum(rows).attr('d', line).attr('fill', 'none').style('stroke', 'var(--color-fg)')
+      .attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+    rows.filter((r) => r.cpl != null).forEach((r) => {
+      const cy = yR(r.cpl);
+      svg.append('circle').attr('cx', cx(r)).attr('cy', cy).attr('r', 4).style('fill', 'var(--color-panel)').style('stroke', 'var(--color-fg)').attr('stroke-width', 2);
+      const perto = Math.abs(cy - yL(r.leads)) < 22;
+      svg.append('text').attr('class', 'rk-lbl').attr('x', cx(r)).attr('y', perto ? cy + 18 : cy - 9).attr('text-anchor', 'middle').text(brl.format(r.cpl));
+    });
+    const tip = makeTip(box);
+    [['calls', '#E6A800'], ['vendas', '#1FA37A']].forEach(([k, cor]) => {
+      const pts = rows.filter((r) => !r.vazio);
+      svg.append('path').datum(pts).attr('d', d3.line().x(cx).y((r) => yL(r[k]))).attr('fill', 'none')
+        .attr('stroke', cor).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+      pts.forEach((r) => {
+        svg.append('circle').attr('cx', cx(r)).attr('cy', yL(r[k])).attr('r', 3.5).style('fill', cor);
+        if (r[k] > 0) svg.append('text').attr('class', 'rk-lbl').attr('x', cx(r)).attr('y', yL(r[k]) - 8).attr('text-anchor', 'middle').style('fill', cor).text(nf0.format(r[k]));
+      });
+    });
+    rows.filter((r) => !r.vazio).forEach((r) => {
+      svg.append('rect').attr('x', x(r.mes) - x.step() * x.paddingInner() / 2).attr('y', m.t).attr('width', x.step()).attr('height', H - m.b - m.t)
+        .attr('fill', 'transparent')
+        .on('mousemove', (ev) => {
+          setTip(tip, mlabel(r.mes), [
+            {label: 'Investimento', value: brl.format(r.investimento)}, {label: 'Leads', value: nf0.format(r.leads)},
+            {label: 'Custo por lead', value: r.cpl == null ? '—' : brl.format(r.cpl)},
+            {label: 'Calls', value: nf0.format(r.calls)}, {label: 'Vendas', value: nf0.format(r.vendas)}]);
+          placeTip(box, tip, ev);
+        })
+        .on('mouseleave', () => { tip.style.display = 'none'; });
+    });
+  }
+
+  // Barras por mês, uma série por produto (empilhadas ou lado a lado)
+  function drawBars(box, months, series, stacked, fmtVal, fmtTick) {
+    box.textContent = '';
+    box.classList.remove('dash-skeleton');
+    const W = Math.max(box.clientWidth, 260), H = 240;
+    const m = {t: 22, r: 8, b: 28, l: 46};
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H);
+    const tot = months.map((_, i) => d3.sum(series, (s) => s.values[i] || 0));
+    const maxV = stacked ? d3.max(tot) : d3.max(series, (s) => d3.max(s.values));
+    const x = d3.scaleBand().domain(months).range([m.l, W - m.r]).padding(0.3);
+    const y = d3.scaleLinear().domain([0, maxV || 1]).nice().range([H - m.b, m.t]);
+    y.ticks(4).forEach((v) => {
+      svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(v)).attr('y2', y(v)).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'rk-axis').attr('x', m.l - 6).attr('y', y(v) + 4).attr('text-anchor', 'end').text(fmtTick(v));
+    });
+    const x1 = d3.scaleBand().domain(series.map((_, i) => i)).range([0, x.bandwidth()]).padding(0.12);
+    months.forEach((mm, i) => {
+      svg.append('text').attr('class', 'rk-axis').attr('x', x(mm) + x.bandwidth() / 2).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(mlabel(mm));
+      if (stacked) {
+        const bw = Math.min(x.bandwidth(), 40), bx = x(mm) + (x.bandwidth() - bw) / 2;
+        let acc = 0;
+        series.forEach((s) => {
+          const v = s.values[i] || 0;
+          if (v > 0) svg.append('rect').attr('x', bx).attr('width', bw).attr('y', y(acc + v)).attr('height', Math.max(0, y(acc) - y(acc + v))).style('fill', s.color);
+          acc += v;
+        });
+        svg.append('text').attr('class', 'rk-val').attr('x', bx + bw / 2).attr('y', y(acc) - 6).attr('text-anchor', 'middle').text(fmtVal(acc));
+      } else {
+        series.forEach((s, j) => {
+          const v = s.values[i] || 0;
+          svg.append('rect').attr('x', x(mm) + x1(j)).attr('width', x1.bandwidth()).attr('y', y(v)).attr('height', Math.max(0, H - m.b - y(v))).attr('rx', 3).style('fill', s.color);
+          if (v > 0) svg.append('text').attr('class', 'rk-axis').attr('x', x(mm) + x1(j) + x1.bandwidth() / 2).attr('y', y(v) - 4).attr('text-anchor', 'middle').text(fmtVal(v));
+        });
+      }
+    });
+    const tip = makeTip(box);
+    months.forEach((mm, i) => {
+      svg.append('rect').attr('x', x(mm) - x.step() * x.paddingInner() / 2).attr('y', m.t).attr('width', x.step()).attr('height', H - m.b - m.t).attr('fill', 'transparent')
+        .on('mousemove', (ev) => {
+          setTip(tip, mlabel(mm), series.map((s) => ({color: s.color, label: s.name, value: fmtVal(s.values[i] || 0)})));
+          placeTip(box, tip, ev);
+        })
+        .on('mouseleave', () => { tip.style.display = 'none'; });
+    });
+  }
+
+  // Barras: investimento total (eixo esq.) + linha: leads totais (eixo dir.)
+  function drawDuo(box, rows) {
+    box.textContent = '';
+    box.classList.remove('dash-skeleton');
+    const W = Math.max(box.clientWidth, 260), H = W > 600 ? 300 : 250;
+    const m = {t: 26, r: 40, b: 30, l: 46};
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', '0 0 ' + W + ' ' + H);
+    const x = d3.scaleBand().domain(rows.map((r) => r.mes)).range([m.l, W - m.r]).padding(0.35);
+    const yL = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.investimento) || 1]).nice().range([H - m.b, m.t]);
+    const yR = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.leads) || 1]).nice().range([H - m.b, m.t]);
+    yL.ticks(4).forEach((v) => {
+      svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yL(v)).attr('y2', yL(v)).style('stroke', 'var(--cds-chart-grid)');
+      svg.append('text').attr('class', 'rk-axis').attr('x', m.l - 6).attr('y', yL(v) + 4).attr('text-anchor', 'end').text(tickMil(v));
+    });
+    yR.ticks(4).forEach((v) => {
+      svg.append('text').attr('class', 'rk-axis').attr('x', W - m.r + 6).attr('y', yR(v) + 4).text(v);
+    });
+    const bw = Math.min(x.bandwidth(), 48);
+    const cx = (r) => x(r.mes) + x.bandwidth() / 2;
+    const curto = x.step() < 62;
+    rows.forEach((r) => {
+      svg.append('rect').attr('x', cx(r) - bw / 2).attr('y', yL(r.investimento)).attr('width', bw)
+        .attr('height', Math.max(0, H - m.b - yL(r.investimento))).attr('rx', 4).style('fill', 'var(--cds-chart-muted)');
+      svg.append('text').attr('class', 'rk-val').attr('x', cx(r)).attr('y', yL(r.investimento) - 6).attr('text-anchor', 'middle')
+        .text(curto ? Math.round(r.investimento / 1000) + 'k' : mil(r.investimento));
+      svg.append('text').attr('class', 'rk-axis').attr('x', cx(r)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(mlabel(r.mes));
+    });
+    svg.append('path').datum(rows).attr('d', d3.line().x(cx).y((r) => yR(r.leads))).attr('fill', 'none').style('stroke', 'var(--color-fg)')
+      .attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+    rows.forEach((r) => {
+      const cy = yR(r.leads);
+      svg.append('circle').attr('cx', cx(r)).attr('cy', cy).attr('r', 4).style('fill', 'var(--color-panel)').style('stroke', 'var(--color-fg)').attr('stroke-width', 2);
+      const perto = Math.abs(cy - yL(r.investimento)) < 22;
+      svg.append('text').attr('class', 'rk-lbl').attr('x', cx(r)).attr('y', perto ? cy + 18 : cy - 9).attr('text-anchor', 'middle').text(nf0.format(r.leads));
+    });
+    const tip = makeTip(box);
+    rows.forEach((r) => {
+      svg.append('rect').attr('x', x(r.mes) - x.step() * x.paddingInner() / 2).attr('y', m.t).attr('width', x.step()).attr('height', H - m.b - m.t).attr('fill', 'transparent')
+        .on('mousemove', (ev) => {
+          setTip(tip, mlabel(r.mes), [
+            {label: 'Investimento', value: brl.format(r.investimento)}, {label: 'Leads', value: nf0.format(r.leads)},
+            {label: 'Custo por lead', value: r.cpl == null ? '—' : brl.format(r.cpl)}]);
+          placeTip(box, tip, ev);
+        })
+        .on('mouseleave', () => { tip.style.display = 'none'; });
+    });
+  }
+
+  function legenda(el) {
+    el.textContent = '';
+    PRODS.forEach((p) => {
+      const s = document.createElement('span'); s.className = 'rk-leg';
+      const i = document.createElement('i'); i.style.background = PC[p];
+      s.append(i, document.createTextNode(p));
+      el.appendChild(s);
+    });
+  }
+
+  function renderTable(sel, rows, cols, rowKey) {
+    const tb = $(sel + ' tbody');
+    tb.textContent = '';
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-key', rowKey(r));
+      if (r.produto === 'Total') tr.className = 'rk-total';
+      if (PC[r.produto]) tr.style.setProperty('--pc', PC[r.produto]);
+      cols.forEach((c) => {
+        const td = document.createElement('td');
+        td.textContent = c.f(r);
+        td.className = (c.num ? 'rk-num ' : '') + (c.p && PC[r.produto] ? 'rk-p ' : '') + (c.cls ? c.cls(r) : '');
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+  const dash2 = (v, f) => show(v, f);
+  const COLS_P = [
+    {f: (r) => r.produto, p: true},
+    {f: (r) => dash2(r.investimento, 'brl'), num: true}, {f: (r) => dash2(r.leads, 'int'), num: true},
+    {f: (r) => dash2(r.cpl, 'brl'), num: true}, {f: (r) => dash2(r.calls, 'int'), num: true},
+    {f: (r) => dash2(r.lead_call, 'pct'), num: true}, {f: (r) => dash2(r.custo_call, 'brl'), num: true},
+    {f: (r) => dash2(r.vendas, 'int'), num: true}
+  ];
+  const dcell = (k, pct, bom) => ({
+    num: true,
+    f: (r) => {
+      const v = r[k];
+      if (v == null || Number.isNaN(v)) return '—';
+      if (pct ? Math.abs(v) < 0.0005 : v === 0) return '=';
+      return (v > 0 ? '▲ ' : '▼ ') + (pct ? pctf.format(Math.abs(v)) : (v > 0 ? '+' : '−') + nf0.format(Math.abs(v)));
+    },
+    cls: (r) => {
+      const v = r[k];
+      const base = 'rk-d ';
+      if (v == null || Number.isNaN(v) || v === 0 || (pct && Math.abs(v) < 0.0005) || !bom) return base + 'rk-mut';
+      return base + ((v > 0) === (bom === 'up') ? 'rk-ok' : 'rk-warn');
+    }
+  });
+  const COLS_M = [
+    {f: (r) => mlabel(r.mes)}, {f: (r) => r.produto, p: true},
+    {f: (r) => dash2(r.investimento, 'brl'), num: true}, dcell('d_investimento', true, null),
+    {f: (r) => dash2(r.leads, 'int'), num: true}, dcell('d_leads', true, 'up'),
+    {f: (r) => dash2(r.cpl, 'brl'), num: true}, dcell('d_cpl', true, 'down'),
+    {f: (r) => dash2(r.calls, 'int'), num: true}, dcell('d_calls', false, 'up'),
+    {f: (r) => dash2(r.custo_call, 'brl'), num: true},
+    {f: (r) => dash2(r.vendas, 'int'), num: true}, dcell('d_vendas', false, 'up')
+  ];
+
+  const render = () => {
+    const pm = dash.data('plano_midia'), mc = dash.data('mensal_calc'), pp = dash.data('por_produto');
+    const vh = dash.data('vendas_hs');
+    const vb = $('#tbl-vendas tbody');
+    vb.textContent = '';
+    if (vh.status === 'ok') {
+      vh.data.forEach((r) => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-key', r.id);
+        const d = r.closedate.split('-');
+        [r.dealname, r.pipeline, d.length === 3 ? d[2] + '/' + d[1] + '/' + d[0] : '—', r.amount == null ? '—' : brl.format(r.amount), r.origem_detalhada_ads || '—'].forEach((t, i) => {
+          const td = document.createElement('td');
+          td.textContent = t;
+          if (i === 3) td.className = 'rk-num';
+          tr.appendChild(td);
+        });
+        const tdl = document.createElement('td');
+        if (/^https:\/\/app\.hubspot\.com\//.test(r.link)) {
+          const an = document.createElement('a');
+          an.href = r.link; an.target = '_blank'; an.rel = 'noopener'; an.textContent = 'Abrir';
+          tdl.appendChild(an);
+        }
+        tr.appendChild(tdl);
+        vb.appendChild(tr);
+      });
+    }
+
+    const ok = pm.status === 'ok' && mc.status === 'ok' && pp.status === 'ok';
+    const st = pm.status !== 'ok' ? pm.status : (mc.status !== 'ok' ? mc.status : pp.status);
+
+    document.querySelectorAll('.rk [data-fmt]').forEach((el) => {
+      const w = (el.getAttribute('data-where') || '').split('=');
+      const row = pp.status === 'ok' ? pp.data.find((r) => String(r[w[0]]) === w[1]) : null;
+      el.textContent = show(row ? row[el.getAttribute('data-field')] : null, el.getAttribute('data-fmt'));
+    });
+
+    const boxes = ['#chart-total', '#chart-invest', '#chart-calls'].concat(PRODS.map((p) => '#chart-' + p));
+    if (!ok) {
+      boxes.forEach((s) => paint($(s), st));
+      $('#tbl-produtos tbody').textContent = '';
+      $('#tbl-mensal tbody').textContent = '';
+      PRODS.forEach((p) => { $('#tbl-mensal-' + p + ' tbody').textContent = ''; });
+      return;
+    }
+
+    const rows = mc.data;
+    const months = [...new Set(rows.map((r) => r.mes))].sort();
+    PRODS.forEach((p) => {
+      const rp = months.map((mm) => rows.find((r) => r.mes === mm && r.produto === p) ||
+        {mes: mm, produto: p, investimento: 0, leads: 0, calls: 0, vendas: 0, cpl: null, vazio: true});
+      if (vis('#chart-' + p)) drawCombo($('#chart-' + p), rp, PC[p]);
+    });
+    const serie = (k) => PRODS.map((p) => ({
+      name: p, color: PC[p],
+      values: months.map((mm) => { const r = rows.find((x) => x.mes === mm && x.produto === p); return r ? r[k] : 0; })
+    }));
+    const tt = dash.data('total_mensal');
+    if (tt.status === 'ok' && vis('#chart-total')) drawDuo($('#chart-total'), tt.data);
+    if (vis('#chart-invest')) {
+      drawBars($('#chart-invest'), months, serie('investimento'), true, mil, tickMil);
+      drawBars($('#chart-calls'), months, serie('calls'), false, (v) => nf0.format(v), (v) => String(v));
+    }
+    legenda($('#leg-invest'));
+    legenda($('#leg-calls'));
+    renderTable('#tbl-produtos', pp.data, COLS_P, (r) => r.produto);
+    renderTable('#tbl-mensal', rows, COLS_M, (r) => r.chave);
+    PRODS.forEach((p) => renderTable('#tbl-mensal-' + p, rows.filter((r) => r.produto === p), COLS_M.filter((c, i) => i !== 1), (r) => r.chave));
+    const aj = (pm.meta || []).find((x) => x.label === 'Ajuste de investimento');
+    $('#ajustes').textContent = aj ? 'Ajuste: a linha de investimento de RMAds em julho vinha igual à de agosto e foi trocada por custo por lead × leads (' + aj.value + ').' : '';
+  };
+
+  const vis = (sel) => { const pn = $(sel).closest('.rk-panel'); return !pn || !pn.hidden; };
+  const ABAS = ['todos'].concat(PRODS);
+  function setAba(n, link) {
+    document.querySelectorAll('.rk-panel').forEach((pn) => { pn.hidden = pn.getAttribute('data-panel') !== n; });
+    document.querySelectorAll('.rk-tab').forEach((b) => b.setAttribute('aria-selected', String(b.getAttribute('data-tab') === n)));
+    if (link) dash.setLink('aba-' + n);
+    render();
+  }
+  document.querySelectorAll('.rk-tab').forEach((b) => b.addEventListener('click', () => setAba(b.getAttribute('data-tab'), true)));
+  dash.onData(render);
+  const nomeAba = decodeURIComponent(location.hash.slice(1)).replace(/^aba-/, '');
+  if (ABAS.indexOf(nomeAba) > 0) setAba(nomeAba, false);
+})();
+</script>
+
+</div></body></html>
